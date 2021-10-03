@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="run" name="Egrep">
+    <property name="src" location="src"/>
+    <property name="build" location="output/build"/>
+    <property name="test" location="tests"/>
+    <property name="tests.suite" value="Egrep.tests.NFATest"/>
+    <property name="reports" location="reports"/>
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+    </target>
+
+    <target name="compile" depends="init"
+            description="compile the source " >
+        <javac debug="true" srcdir="${src}" excludes="" destdir="${build}"/>
+    </target>
+
+    <target name="run" depends="compile"
+            description="run examples">
+        <echo>================ Run Object Main ================</echo>
+        <java classname="RegEx"
+                classpath="${build}/:jars/*" fork="true">
+            <!-- put the regex here -->
+            <arg value="a|bc*"/>
+        </java>
+    </target>
+
+    <target name="dist" depends="init,clean"
+            description="Generer la distribution" >
+        <jar basedir="." jarfile="../EGrep_${DSTAMP}.jar"/>
+    </target>
+
+    <target name="clean"
+            description="clean up" >
+        <echo>================ Removing temporary files... ================</echo>
+        <delete verbose="true"> <!-- Remove all *~ files -->
+            <fileset dir="${basedir}" defaultexcludes="no">
+                <include name="**/*~"/>
+            </fileset>
+        </delete>
+        <echo>================ Removing build directory ================</echo>
+        <delete dir="${build}"/>
+    </target>
+</project>
