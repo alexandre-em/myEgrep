@@ -94,57 +94,6 @@ public class NFA {
         for (int i=1;i<2+l-1;i++) for (int s: eTab_fils[i-1]) eTab[i].add(s+1); //copy old transitions
         return new NDFA(tTab,eTab);
     }
-    public static DFA transform(NFA automata) {
-        // Retrieve all possible characters
-        Set<Character> characters=new HashSet<>();
-        Set<ArrayList<Integer>> sommets=new HashSet<>();
-        Map<ArrayList<Integer>, Boolean> isComplete=new HashMap<>();
-        ArrayList<Integer> l=new ArrayList<>();
-        int[][] transitionTable=automata.automata.transitionTable;
-        for(int i=0;i<transitionTable.length;i++) for(int j=0;j<transitionTable[i].length;j++)
-            if(transitionTable[i][j]!=-1) characters.add((char)j);
-        // Initialisation
-        l.add(0);
-        l=epsilonClosure(l, automata);
-        sommets.add(l);
-        isComplete.put(l, false);
-        // watch for all cases
-        while(isComplete.containsValue(false)) {
-            l=isComplete.keySet().stream().filter(val -> !isComplete.get(val)).collect(Collectors.toList()).get(0);
-            isComplete.put(l, true);
-            for (Character c : characters) {
-                ArrayList<Integer> moveDFA = (epsilonClosure(moveNFA(l, automata, c), automata));
-                if (!moveDFA.isEmpty() && !isComplete.containsKey(moveDFA)) {
-                    isComplete.put(moveDFA, false);
-                }
-            }
-        }
-        Map<ArrayList<Integer>, Boolean> DFAutomata=new HashMap<>();
-        for(ArrayList<Integer> sommet: isComplete.keySet()) {
-            DFAutomata.put(sommet, sommet.contains(transitionTable.length-1));
-        }
-        return null;
-    }
-
-    public static ArrayList<Integer> moveNFA(ArrayList<Integer> previous, NFA automata, char c) {
-        int[][] transitionTable=automata.automata.transitionTable;
-        Set<Integer> result=new HashSet<>();
-        for(Integer i:previous){
-            if(transitionTable[i][(int)c]!=-1) result.add(transitionTable[i][(int)c]);
-        }
-        return (ArrayList<Integer>) result.stream().collect(Collectors.toList());
-    }
-
-    public static ArrayList<Integer> epsilonClosure(ArrayList<Integer> moveNFA, NFA automata) {
-        ArrayList<Integer> result=new ArrayList<>();
-        for(Integer p: moveNFA){
-            result.addAll(automata.automata.epsilonTransitionTable[p]);
-            result.addAll(epsilonClosure(result, automata));
-        }
-        result.addAll(moveNFA);
-        Set<Integer> resultSet=new HashSet<>(result);
-        return (ArrayList<Integer>) resultSet.stream().collect(Collectors.toList());
-    }
 
     public NDFA getAutomata() {return automata;}
 }
@@ -168,10 +117,4 @@ class NDFA {
 
     public int[][] getTransitionTable() {return transitionTable;}
     public ArrayList<Integer>[] getEpsilonTransitionTable() {return epsilonTransitionTable;}
-}
-class DFA {
-    protected Map<ArrayList<Integer>, Boolean> isFinal=new HashMap<>();
-    public DFA(Map<ArrayList<Integer>, Boolean> isFinal) {
-        this.isFinal=isFinal;
-    }
 }
