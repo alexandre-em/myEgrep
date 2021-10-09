@@ -15,45 +15,13 @@ public class RegEx {
   static final int DOT = 0xD07;
 
   //REGEX
-  private static String regEx;
+  private String regEx;
 
   //CONSTRUCTOR
-  public RegEx(){}
-
-  //MAIN
-  public static void main(String arg[]) {
-    System.out.println("Welcome to Bogota, Mr. Thomas Anderson.");
-    if (arg.length!=0) {
-      regEx = arg[0];
-    } else {
-      Scanner scanner = new Scanner(System.in);
-      System.out.print("  >> Please enter a regEx: ");
-      regEx = scanner.next();
-    }
-    System.out.println("  >> Parsing regEx \""+regEx+"\".");
-    System.out.println("  >> ...");
-
-    if (regEx.length()<1) {
-      System.err.println("  >> ERROR: empty regEx.");
-    } else {
-      System.out.print("  >> ASCII codes: ["+(int)regEx.charAt(0));
-      for (int i=1;i<regEx.length();i++) System.out.print(","+(int)regEx.charAt(i));
-      System.out.println("].");
-      try {
-        RegExTree ret = parse();
-        System.out.println("  >> Tree result: "+ret.toString()+".");
-      } catch (Exception e) {
-        System.err.println("  >> ERROR: syntax error for regEx \""+regEx+"\".");
-      }
-    }
-
-    System.out.println("  >> ...");
-    System.out.println("  >> Parsing completed.");
-    System.out.println("Goodbye Mr. Anderson.");
-  }
+  public RegEx(String regex){ this.regEx=regex; }
 
   //FROM REGEX TO SYNTAX TREE
-  private static RegExTree parse() throws Exception {
+  public RegExTree parse() throws Exception {
     //BEGIN DEBUG: set conditionnal to true for debug example
     if (false) throw new Exception();
     RegExTree example = exampleAhoUllman();
@@ -65,7 +33,7 @@ public class RegEx {
 
     return parse(result);
   }
-  private static int charToRoot(char c) {
+  private int charToRoot(char c) {
     if (c=='.') return DOT;
     if (c=='*') return ETOILE;
     if (c=='|') return ALTERN;
@@ -73,7 +41,7 @@ public class RegEx {
     if (c==')') return PARENTHESEFERMANT;
     return (int)c;
   }
-  private static RegExTree parse(ArrayList<RegExTree> result) throws Exception {
+  public RegExTree parse(ArrayList<RegExTree> result) throws Exception {
     while (containParenthese(result)) result=processParenthese(result);
     while (containEtoile(result)) result=processEtoile(result);
     while (containConcat(result)) result=processConcat(result);
@@ -83,11 +51,11 @@ public class RegEx {
 
     return removeProtection(result.get(0));
   }
-  private static boolean containParenthese(ArrayList<RegExTree> trees) {
+  private boolean containParenthese(ArrayList<RegExTree> trees) {
     for (RegExTree t: trees) if (t.root==PARENTHESEFERMANT || t.root==PARENTHESEOUVRANT) return true;
     return false;
   }
-  private static ArrayList<RegExTree> processParenthese(ArrayList<RegExTree> trees) throws Exception {
+  private ArrayList<RegExTree> processParenthese(ArrayList<RegExTree> trees) throws Exception {
     ArrayList<RegExTree> result = new ArrayList<RegExTree>();
     boolean found = false;
     for (RegExTree t: trees) {
@@ -109,11 +77,11 @@ public class RegEx {
     if (!found) throw new Exception();
     return result;
   }
-  private static boolean containEtoile(ArrayList<RegExTree> trees) {
+  private boolean containEtoile(ArrayList<RegExTree> trees) {
     for (RegExTree t: trees) if (t.root==ETOILE && t.subTrees.isEmpty()) return true;
     return false;
   }
-  private static ArrayList<RegExTree> processEtoile(ArrayList<RegExTree> trees) throws Exception {
+  private ArrayList<RegExTree> processEtoile(ArrayList<RegExTree> trees) throws Exception {
     ArrayList<RegExTree> result = new ArrayList<RegExTree>();
     boolean found = false;
     for (RegExTree t: trees) {
@@ -130,7 +98,7 @@ public class RegEx {
     }
     return result;
   }
-  private static boolean containConcat(ArrayList<RegExTree> trees) {
+  private boolean containConcat(ArrayList<RegExTree> trees) {
     boolean firstFound = false;
     for (RegExTree t: trees) {
       if (!firstFound && t.root!=ALTERN) { firstFound = true; continue; }
@@ -138,7 +106,7 @@ public class RegEx {
     }
     return false;
   }
-  private static ArrayList<RegExTree> processConcat(ArrayList<RegExTree> trees) throws Exception {
+  private ArrayList<RegExTree> processConcat(ArrayList<RegExTree> trees) throws Exception {
     ArrayList<RegExTree> result = new ArrayList<RegExTree>();
     boolean found = false;
     boolean firstFound = false;
@@ -166,11 +134,11 @@ public class RegEx {
     }
     return result;
   }
-  private static boolean containAltern(ArrayList<RegExTree> trees) {
+  private boolean containAltern(ArrayList<RegExTree> trees) {
     for (RegExTree t: trees) if (t.root==ALTERN && t.subTrees.isEmpty()) return true;
     return false;
   }
-  private static ArrayList<RegExTree> processAltern(ArrayList<RegExTree> trees) throws Exception {
+  private ArrayList<RegExTree> processAltern(ArrayList<RegExTree> trees) throws Exception {
     ArrayList<RegExTree> result = new ArrayList<RegExTree>();
     boolean found = false;
     RegExTree gauche = null;
@@ -195,7 +163,7 @@ public class RegEx {
     }
     return result;
   }
-  private static RegExTree removeProtection(RegExTree tree) throws Exception {
+  private RegExTree removeProtection(RegExTree tree) throws Exception {
     if (tree.root==PROTECTION && tree.subTrees.size()!=1) throw new Exception();
     if (tree.subTrees.isEmpty()) return tree;
     if (tree.root==PROTECTION) return removeProtection(tree.subTrees.get(0));
@@ -204,17 +172,9 @@ public class RegEx {
     for (RegExTree t: tree.subTrees) subTrees.add(removeProtection(t));
     return new RegExTree(tree.root, subTrees);
   }
-  private static boolean isOperator(char root) {
+  private boolean isOperator(char root) {
     return root == ETOILE || root == DOT || root == CONCAT || root == ALTERN;
   }
-  private static void foo(RegExTree node) {
-    int l = node.subTrees.size();
-    if (l <= 0) return;
-    for (int i=0; i<l; i++) {
-        foo(node.subTrees.get(i));
-    }
-  }
-
   //EXAMPLE
   // --> RegEx from Aho-Ullman book Chap.10 Example 10.25
   private static RegExTree exampleAhoUllman() {

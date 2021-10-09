@@ -1,18 +1,18 @@
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class RegExTreeTest {
     RegExTree tree = AhoUllmanExemple.exampleAhoUllman();
     @Test
-    void testRegExTreeClone() {
+    public void testRegExTreeClone() {
         RegExTree clone = RegExTree.cloneTree(tree);
         assertNotEquals(tree, clone);
         assertEquals(tree.root, clone.root);
     }
     @Test
-    void testToString() {
+    public void testToString() {
         assertEquals(tree.toString(), "|(a,.(b,*(c)))");
     }
 }

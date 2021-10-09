@@ -1,15 +1,16 @@
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class NFATest {
     RegExTree tree = AhoUllmanExemple.exampleAhoUllman();
     NFA automata = new NFA(tree);
     @Test
-    void NFAbuildTest() {
+    public void NFAbuildTest() {
+        System.out.println(automata.getAutomata());
         ArrayList<Integer>[] epsilonTransition = automata.getAutomata().getEpsilonTransitionTable();
         int lepsilon=0;
         for (int i=0; i<epsilonTransition.length; i++) lepsilon+=epsilonTransition[i].size();
