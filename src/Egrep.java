@@ -1,6 +1,8 @@
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * <h1>EGrep class</h1>
@@ -18,6 +20,7 @@ public class Egrep {
         System.out.println(args[0]+" "+args[1]);
         ArrayList<String> text=new ArrayList<>();
         try {
+            long startTime = System.currentTimeMillis();
             File myObj = new File(args[1]);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine())
@@ -26,6 +29,9 @@ public class Egrep {
             String regex = args[0];
             ArrayList<String> searchResult = search(text, regex);
             System.out.println(searchResult);
+            long time = (System.currentTimeMillis() - startTime);
+            System.out.println(time+" ms");
+            System.out.println(searchResult.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,7 +46,7 @@ public class Egrep {
      */
     public static ArrayList<String> search(ArrayList<String> text, String regex) throws Exception {
         // Initialisation of the regex to the automata generation
-        ArrayList<String> result = new ArrayList<>();
+        Set<String> result = new HashSet<>();
         RegEx r = new RegEx(regex);
         RegExTree regexTree = r.parse();
         NFA nfa = new NFA(regexTree);
@@ -66,6 +72,6 @@ public class Egrep {
                     result.add("\n \u001B[32m[LINE #"+text.indexOf(line)+"] \u001B[0m"+line);
             }
         }
-        return result;
+        return new ArrayList<>(result);
     }
 }

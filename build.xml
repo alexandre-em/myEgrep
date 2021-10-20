@@ -19,7 +19,7 @@
         <mkdir dir="${target.doc.dir}"/>
     </target>
 
-    <target name="compile" depends="init,doc"
+    <target name="compile" depends="init"
             description="compile the source " >
         <javac debug="true" srcdir="${src}" excludes="" destdir="${target.classes.java.dir}"/>
         <javac srcdir="tests/" destdir="${target.classes.test.dir}" classpathref="project.class.path" includeantruntime="false" />
